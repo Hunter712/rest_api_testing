@@ -1,19 +1,27 @@
+import pytest
 
 
-def test_profile_tabs(user):
+@pytest.mark.parametrize("user_data",
+                         [({"name": "Vlad F123", "gender": "male", "email": "vladf123@gmail.com", "status": "active"},
+                           {'title': 'my title', 'body': 'my body'})
+                          ])
+def test_profile_tabs(new_user, user_data):
     """
     1. Create new user
-    2. Verify that user has created
-    3. Create new post
-    4. Verify that post has created
-    5. Delete user
+    2. Create new post
+    3. Verify that post has created
+    4. Delete user
     """
-    status_code = user.get_user()
-    assert status_code == 200
+    user = new_user(user_data)
 
-    status_code = user.create_post()
-    assert status_code == 201
+    user.create_user()
+    # assert response.status_code == 201
+    #
+    # response = user.get_user()
+    # assert response.json()[0]['name'] == 'Vlad F12'
 
-    status_code = user.get_user_posts()
-    assert status_code == 200
+    response = user.create_post()
+    assert response.status_code == 201
 
+    response = user.get_user_posts()
+    assert response.json()[0]['title'] == 'my title'

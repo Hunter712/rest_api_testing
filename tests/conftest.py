@@ -3,14 +3,14 @@ from http_client import HTTPClient
 
 
 @pytest.fixture()
-def user():
-    new_user = HTTPClient()
-    new_user.create_user()
+def new_user(request):
+    def new_client(user_data):
+        client = HTTPClient(user_data)
 
-    yield new_user
+        def delete_user():
+            client.delete_user()
 
-    new_user.delete_user()
+        request.addfinalizer(delete_user)
+        return client
 
-
-
-
+    return new_client
